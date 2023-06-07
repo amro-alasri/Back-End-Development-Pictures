@@ -35,7 +35,7 @@ def count():
 ######################################################################
 @app.route("/picture", methods=["GET"])
 def get_pictures():
-    pass
+    return data,200
 
 ######################################################################
 # GET A PICTURE
@@ -44,15 +44,23 @@ def get_pictures():
 
 @app.route("/picture/<int:id>", methods=["GET"])
 def get_picture_by_id(id):
-    pass
-
+    for d in data:
+        if d["id"] == id:
+            return d,200
+    return {"message":"error "},404
 
 ######################################################################
 # CREATE A PICTURE
 ######################################################################
 @app.route("/picture", methods=["POST"])
 def create_picture():
-    pass
+    picture = request.get_json()
+    for d in data:
+        if picture["id"] == d["id"]:
+            return {"Message": f"picture with id {picture['id']} already present"},302
+    data.append(picture)
+    return picture, 201   
+
 
 ######################################################################
 # UPDATE A PICTURE
@@ -61,11 +69,24 @@ def create_picture():
 
 @app.route("/picture/<int:id>", methods=["PUT"])
 def update_picture(id):
-    pass
+    p = request.get_json()
+    for d in data:
+        if d["id"] == id :
+            d["pic_url"] = p["pic_url"]
+            d["event_state"] = p["event_state"]
+            d["event_city"] = p["event_city"]
+            d["event_date"] = p["event_date"]
+            return d , 200
+    return {"message": "picture not found"},404
 
 ######################################################################
 # DELETE A PICTURE
 ######################################################################
 @app.route("/picture/<int:id>", methods=["DELETE"])
 def delete_picture(id):
-    pass
+    for d in data :
+       if d["id"] == id :
+           data.remove(d)
+           return {},204
+    return  {"message": "picture not found"},404    
+
